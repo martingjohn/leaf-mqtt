@@ -63,7 +63,7 @@ else:
 username = settings['username']
 password = settings['password']
 mqtt_host = settings['mqtt_host']
-mqtt_port = settings['mqtt_port']
+mqtt_port = 1883
 mqtt_username = settings['mqtt_username']
 mqtt_password = settings['mqtt_password']
 mqtt_control_topic = settings['mqtt_control_topic']
