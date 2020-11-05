@@ -2,7 +2,7 @@
 
 import pycarwings2
 import time
-from ConfigParser import SafeConfigParser, NoOptionError
+from configparser import SafeConfigParser, NoOptionError
 import logging
 import sys
 import pprint
