@@ -147,7 +147,6 @@ if 'mqtt_cert' in settings:
     client.tls_set(settings['mqtt_cert'])
 
 client.username_pw_set(mqtt_username, mqtt_password)
-logging.info('Connecting to MQTT broker "' + mqtt_host + ':' + mqtt_port + '"')
 client.connect(mqtt_host, mqtt_port, 60)
 client.publish(mqtt_status_topic, "Connected to MQTT host " + mqtt_host)
 
