@@ -10,9 +10,6 @@ import paho.mqtt.client as mqtt
 import schedule
 from datetime import datetime
 import os
-import locale
-
-locale.setlocale(locale.LC_TIME, "de_AT")
 
 config_file = '/conf/config.ini'
 config_settings = [
