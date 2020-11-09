@@ -1,3 +1,4 @@
 git+https://github.com/filcole/pycarwings2.git#egg=pycarwings2
 paho-mqtt
 schedule
+babel
