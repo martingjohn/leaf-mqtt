@@ -116,7 +116,7 @@ def mqtt_publish(leaf_info):
     utc_datetime = datetime.strptime(leaf_info.answer["BatteryStatusRecords"]["NotificationDateAndTime"], '%Y/%m/%d %H:%M')
     now_timestamp = time.time()
     offset = datetime.fromtimestamp(now_timestamp) - datetime.utcfromtimestamp(now_timestamp)
-    client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%A %H:%M"))
+    client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%d.%m %H:%M"))
     time.sleep(1)
     client.publish(mqtt_status_topic + "/battery_percent", leaf_info.battery_percent)
     time.sleep(1)
