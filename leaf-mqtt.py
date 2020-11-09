@@ -10,7 +10,9 @@ import paho.mqtt.client as mqtt
 import schedule
 from datetime import datetime
 import os
+import locale
 
+locale.setlocale(locale.LC_TIME, "de_AT")
 
 config_file = '/conf/config.ini'
 config_settings = [
@@ -114,7 +116,10 @@ def mqtt_publish(leaf_info):
     logging.info("End update time: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     logging.info("publishing to MQTT base status topic: " + mqtt_status_topic)
-    client.publish(mqtt_status_topic + "/last_updated", leaf_info.answer["BatteryStatusRecords"]["NotificationDateAndTime"])
+    utc_datetime = datetime.strptime(leaf_info.answer["BatteryStatusRecords"]["NotificationDateAndTime"], '%Y/%m/%d %H:%M')
+    now_timestamp = time.time()
+    offset = datetime.fromtimestamp(now_timestamp) - datetime.utcfromtimestamp(now_timestamp)
+    client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%A %H:%M"))
     time.sleep(1)
     client.publish(mqtt_status_topic + "/battery_percent", leaf_info.battery_percent)
     time.sleep(1)
