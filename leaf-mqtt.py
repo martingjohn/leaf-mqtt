@@ -136,6 +136,8 @@ def mqtt_publish(leaf_info):
     time.sleep(1)
     client.publish(mqtt_status_topic + "/range_ac_off_miles",off_m)
     time.sleep(1)
+    client.publish(mqtt_status_topic + "/VIN",leaf_info.vin)
+    time.sleep(1)
 
     if leaf_info.is_connected == True:
         client.publish(mqtt_status_topic + "/connected", "Yes")
@@ -236,6 +238,10 @@ def get_leaf_status():
         logging.error("CarWings API error")
         return
 
+    if registered==0:
+        # Register values for Homeassistant
+        mqtt_register(l.vin)
+
     logging.info("get_latest_battery_status")
 
     leaf_info = l.get_latest_battery_status()
@@ -266,6 +272,8 @@ def get_leaf_status():
     logging.info("Range AC off (miles) - %s" % off_m)
     logging.info("Range AC on (miles) - %s" % on_m)
 
+    leaf_info.vin=l.vin
+    logging.info("VIN - %s" % leaf_info.vin)
 
     # logging.info("getting climate update")
     # climate = l.get_latest_hvac_status()
@@ -277,8 +285,40 @@ def get_leaf_status():
     logging.info("Schedule API update every " + api_update_interval_min + "min")
     return (leaf_info)
 
+# Get last updated data from Nissan server
+def mqtt_register(vin):
+    #logging.info("Registering on Homeassistant")
+    global registered
+    registered=1
+    logging.info("Registering on Home Assistant: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    logging.info("VIN - %s" % vin)
+
+    #client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%d.%m %H:%M"))
+
+    charger_connected={
+            "device_class": "plug",
+            "name": "Leaf Charger Connected",
+            "state_topic": "~/connected",
+            "payload_on": "Yes",
+            "payload_off": "No",
+            "unique_id": vin+"_charger_connected",
+            "~": mqtt_status_topic}
+    client.publish("homeassistant/binary_sensor/"+vin+"_charger_connected/config", str(charger_connected).replace("'",'"'))
+    time.sleep(1)
+
+    battery_level={
+            "device_class": "battery",
+            "name": "Leaf Battery",
+            "state_topic": "~/battery_percent",
+            "unique_id": vin+"_battery_level",
+            "~": mqtt_status_topic}
+    client.publish("homeassistant/sensor/"+vin+"_battery_level/config", str(battery_level).replace("'",'"'))
+
+    return
+
 
 # Run initial get_status
+registered=0
 get_leaf_status()
 
 # Run schedule
