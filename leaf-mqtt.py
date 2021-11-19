@@ -125,6 +125,14 @@ def mqtt_publish(leaf_info):
     client.publish(mqtt_status_topic + "/charge_time", str(leaf_info.time_to_full_l2))
     time.sleep(1)
 
+    # Added some extras
+    off_m=round(float(leaf_info.cruising_range_ac_off_km)*0.621371)
+    on_m=round(float(leaf_info.cruising_range_ac_on_km)*0.621371)
+    client.publish(mqtt_status_topic + "/range_ac_on_m",on_m)
+    time.sleep(1)
+    client.publish(mqtt_status_topic + "/range_ac_off_m",off_m)
+    time.sleep(1)
+
     if leaf_info.is_connected == True:
         client.publish(mqtt_status_topic + "/connected", "Yes")
     elif leaf_info.is_connected == False:
@@ -245,6 +253,15 @@ def get_leaf_status():
     logging.info("time_to_full_l2 %s" % leaf_info.time_to_full_l2)
     logging.info("time_to_full_l2_6kw %s" % leaf_info.time_to_full_l2_6kw)
     logging.info("leaf_info.battery_percent %s" % leaf_info.battery_percent)
+
+    # Added some extras
+    logging.info("Range AC off (km) - %s" % leaf_info.cruising_range_ac_off_km)
+    logging.info("Range AC on (km) - %s" % leaf_info.cruising_range_ac_on_km)
+    off_m=round(float(leaf_info.cruising_range_ac_off_km)*0.621371)
+    on_m=round(float(leaf_info.cruising_range_ac_on_km)*0.621371)
+    logging.info("Range AC off (miles) - %s" % off_m)
+    logging.info("Range AC on (miles) - %s" % on_m)
+
 
     # logging.info("getting climate update")
     # climate = l.get_latest_hvac_status()
