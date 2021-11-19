@@ -126,11 +126,15 @@ def mqtt_publish(leaf_info):
     time.sleep(1)
 
     # Added some extras
+    client.publish(mqtt_status_topic + "/range_ac_on_km",leaf_info.cruising_range_ac_on_km)
+    time.sleep(1)
+    client.publish(mqtt_status_topic + "/range_ac_off_km",leaf_info.cruising_range_ac_off_km)
+    time.sleep(1)
     off_m=round(float(leaf_info.cruising_range_ac_off_km)*0.621371)
     on_m=round(float(leaf_info.cruising_range_ac_on_km)*0.621371)
-    client.publish(mqtt_status_topic + "/range_ac_on_m",on_m)
+    client.publish(mqtt_status_topic + "/range_ac_on_miles",on_m)
     time.sleep(1)
-    client.publish(mqtt_status_topic + "/range_ac_off_m",off_m)
+    client.publish(mqtt_status_topic + "/range_ac_off_miles",off_m)
     time.sleep(1)
 
     if leaf_info.is_connected == True:
