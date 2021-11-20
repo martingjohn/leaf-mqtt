@@ -2,7 +2,7 @@
 
 import pycarwings2
 import time
-from configparser import SafeConfigParser, NoOptionError
+from configparser import ConfigParser, NoOptionError
 import logging
 import sys
 import pprint
@@ -10,6 +10,7 @@ import paho.mqtt.client as mqtt
 import schedule
 from datetime import datetime
 import os
+import json
 
 config_file = '/conf/config.ini'
 config_settings = [
@@ -40,7 +41,7 @@ for setting in config_settings:
         pass
 
 # Get login details from 'config.ini' or environment
-parser = SafeConfigParser()
+parser = ConfigParser()
 if os.path.exists(config_file_path):
     logging.info("Loaded config file " + config_file_path)
     candidates = config_file_path
@@ -63,15 +64,15 @@ else:
 username = settings['username']
 password = settings['password']
 mqtt_host = settings['mqtt_host']
-#mqtt_port = settings['mqtt_port']
-mqtt_port = 1883
+#mqtt_port = 1883
+mqtt_port = int(settings['mqtt_port'])
 mqtt_username = settings['mqtt_username']
 mqtt_password = settings['mqtt_password']
 mqtt_control_topic = settings['mqtt_control_topic']
 mqtt_status_topic = settings['mqtt_status_topic']
 nissan_region_code = settings['nissan_region_code']
-api_update_interval_min = settings['api_update_interval_min']
-homeassistant = settings['homeassistant']
+api_update_interval_min = str(settings['api_update_interval_min'])
+homeassistant = int(settings['homeassistant'])
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -292,9 +293,9 @@ def get_leaf_status():
 def mqtt_register(vin):
     #logging.info("Registering on Homeassistant")
     global homeassistant
-    homeassistant=0
+    homeassistant=0 # only register the once
     logging.info("Registering on Home Assistant: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    logging.info("VIN - %s" % vin)
+    #logging.info("VIN - %s" % vin)
 
     #client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%d.%m %H:%M"))
 
@@ -305,8 +306,9 @@ def mqtt_register(vin):
             "payload_on": "Yes",
             "payload_off": "No",
             "unique_id": vin+"_charger_connected",
-            "~": mqtt_status_topic}
-    client.publish("homeassistant/binary_sensor/"+vin+"_charger_connected/config", str(charger_connected).replace("'",'"'))
+            "~": mqtt_status_topic
+            }
+    client.publish("homeassistant/binary_sensor/"+vin+"_charger_connected/config", json.dumps(charger_connected))
     time.sleep(1)
 
     battery_level={
@@ -314,14 +316,14 @@ def mqtt_register(vin):
             "name": "Leaf Battery",
             "state_topic": "~/battery_percent",
             "unique_id": vin+"_battery_level",
-            "~": mqtt_status_topic}
-    client.publish("homeassistant/sensor/"+vin+"_battery_level/config", str(battery_level).replace("'",'"'))
+            "~": mqtt_status_topic
+            }
+    client.publish("homeassistant/sensor/"+vin+"_battery_level/config", json.dumps(battery_level))
 
     return
 
 
 # Run initial get_status
-#homeassistant=1
 get_leaf_status()
 
 # Run schedule
