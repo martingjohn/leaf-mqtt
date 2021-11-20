@@ -22,7 +22,8 @@ config_settings = [
     'mqtt_control_topic',
     'mqtt_status_topic',
     'nissan_region_code',
-    'api_update_interval_min'
+    'api_update_interval_min',
+    'homeassistant'
 ]
 settings = {}
 
@@ -62,6 +63,7 @@ else:
 username = settings['username']
 password = settings['password']
 mqtt_host = settings['mqtt_host']
+#mqtt_port = settings['mqtt_port']
 mqtt_port = 1883
 mqtt_username = settings['mqtt_username']
 mqtt_password = settings['mqtt_password']
@@ -69,6 +71,7 @@ mqtt_control_topic = settings['mqtt_control_topic']
 mqtt_status_topic = settings['mqtt_status_topic']
 nissan_region_code = settings['nissan_region_code']
 api_update_interval_min = settings['api_update_interval_min']
+homeassistant = settings['homeassistant']
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -238,7 +241,7 @@ def get_leaf_status():
         logging.error("CarWings API error")
         return
 
-    if registered==0:
+    if homeassistant==1:
         # Register values for Homeassistant
         mqtt_register(l.vin)
 
@@ -288,8 +291,8 @@ def get_leaf_status():
 # Get last updated data from Nissan server
 def mqtt_register(vin):
     #logging.info("Registering on Homeassistant")
-    global registered
-    registered=1
+    global homeassistant
+    homeassistant=0
     logging.info("Registering on Home Assistant: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     logging.info("VIN - %s" % vin)
 
@@ -318,7 +321,7 @@ def mqtt_register(vin):
 
 
 # Run initial get_status
-registered=0
+#homeassistant=1
 get_leaf_status()
 
 # Run schedule
