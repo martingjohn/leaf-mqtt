@@ -301,7 +301,7 @@ def mqtt_register(vin):
 
     charger_connected={
             "device_class": "plug",
-            "name": "Leaf Charger Connected",
+            "name": "zLeaf Charger Connected",
             "state_topic": "~/connected",
             "payload_on": "Yes",
             "payload_off": "No",
@@ -313,12 +313,40 @@ def mqtt_register(vin):
 
     battery_level={
             "device_class": "battery",
-            "name": "Leaf Battery",
+            "name": "zLeaf Battery",
             "state_topic": "~/battery_percent",
             "unique_id": vin+"_battery_level",
             "~": mqtt_status_topic
             }
     client.publish("homeassistant/sensor/"+vin+"_battery_level/config", json.dumps(battery_level))
+    time.sleep(1)
+
+    battery_level2={
+            "device_class": "battery",
+            "name": "zLeaf B",
+            "state_topic": "~/battery_percent",
+            "unique_id": vin+"_battery_l",
+            "~": mqtt_status_topic
+            }
+    time.sleep(1)
+
+    range_ac_on_miles={
+            "name": "zLeaf AC On Range miles",
+            "state_topic": "~/range_ac_on_miles",
+            "unique_id": vin+"_range_ac_on_miles",
+            "~": mqtt_status_topic
+            }
+    client.publish("homeassistant/sensor/"+vin+"_range_ac_on_miles/config", json.dumps(range_ac_on_miles))
+    time.sleep(1)
+
+    range_ac_off_miles={
+            "name": "zLeaf AC Off Range miles",
+            "state_topic": "~/range_ac_off_miles",
+            "unique_id": vin+"_range_ac_off_miles",
+            "~": mqtt_status_topic
+            }
+    client.publish("homeassistant/sensor/"+vin+"_range_ac_off_miles/config", json.dumps(range_ac_off_miles))
+    time.sleep(1)
 
     return
 
