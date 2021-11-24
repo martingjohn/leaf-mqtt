@@ -24,7 +24,8 @@ config_settings = [
     'mqtt_status_topic',
     'nissan_region_code',
     'api_update_interval_min',
-    'homeassistant'
+    'homeassistant',
+    'ha_name'
 ]
 settings = {}
 
@@ -51,8 +52,12 @@ if os.path.exists(config_file_path):
             try:
                 settings[setting] = parser.get('get-leaf-info', setting)
             except NoOptionError:
-                logging.error("Unable to find setting " + setting)
-                exit(1)
+                if setting=="ha_name":
+                    settings['ha_name']=settings['mqtt_status_topic'].partition("/")[0].title()
+                    logging.info("Defaulting setting " + setting + " to " + settings['ha_name'])
+                else:
+                    logging.error("Unable to find setting " + setting)
+                    exit(1)
 else:
     logging.error("ERROR: Config file not found " + config_file_path)
     sys.exit(1)
@@ -73,7 +78,8 @@ mqtt_status_topic = settings['mqtt_status_topic']
 nissan_region_code = settings['nissan_region_code']
 api_update_interval_min = str(settings['api_update_interval_min'])
 homeassistant = int(settings['homeassistant'])
-
+ha_name=settings['ha_name']
+expire_after=int(api_update_interval_min)*1.5*60
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -301,11 +307,12 @@ def mqtt_register(vin):
 
     charger_connected={
             "device_class": "plug",
-            "name": "zLeaf Charger Connected",
+            "name": ha_name+" Charger Connected",
             "state_topic": "~/connected",
             "payload_on": "Yes",
             "payload_off": "No",
             "unique_id": vin+"_charger_connected",
+            "expire_after": expire_after,
             "~": mqtt_status_topic
             }
     client.publish("homeassistant/binary_sensor/"+vin+"_charger_connected/config", json.dumps(charger_connected))
@@ -313,36 +320,30 @@ def mqtt_register(vin):
 
     battery_level={
             "device_class": "battery",
-            "name": "zLeaf Battery",
+            "name": ha_name+" Battery",
             "state_topic": "~/battery_percent",
             "unique_id": vin+"_battery_level",
+            "expire_after": expire_after,
             "~": mqtt_status_topic
             }
     client.publish("homeassistant/sensor/"+vin+"_battery_level/config", json.dumps(battery_level))
     time.sleep(1)
 
-    battery_level2={
-            "device_class": "battery",
-            "name": "zLeaf B",
-            "state_topic": "~/battery_percent",
-            "unique_id": vin+"_battery_l",
-            "~": mqtt_status_topic
-            }
-    time.sleep(1)
-
     range_ac_on_miles={
-            "name": "zLeaf AC On Range miles",
+            "name": ha_name+" AC On Range miles",
             "state_topic": "~/range_ac_on_miles",
             "unique_id": vin+"_range_ac_on_miles",
+            "expire_after": expire_after,
             "~": mqtt_status_topic
             }
     client.publish("homeassistant/sensor/"+vin+"_range_ac_on_miles/config", json.dumps(range_ac_on_miles))
     time.sleep(1)
 
     range_ac_off_miles={
-            "name": "zLeaf AC Off Range miles",
+            "name": ha_name+" AC Off Range miles",
             "state_topic": "~/range_ac_off_miles",
             "unique_id": vin+"_range_ac_off_miles",
+            "expire_after": expire_after,
             "~": mqtt_status_topic
             }
     client.publish("homeassistant/sensor/"+vin+"_range_ac_off_miles/config", json.dumps(range_ac_off_miles))

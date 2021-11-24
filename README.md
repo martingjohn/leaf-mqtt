@@ -2,8 +2,10 @@
 Script that connects your Nissan Leaf to MQTT
 
 There are a number of variables needed, the defaults stored in config.ini (below)
-Homeassisant = 1 - register devices on Home Assistant's discovery topic
-Homeassisant = 0 - don't register devices on Home Assistant's discovery topic
+homeassisant = 1 - register devices on Home Assistant's discovery topic
+homeassisant = 0 - don't register devices on Home Assistant's discovery topic
+
+ha_name - only relevant when registering on Home Assistant, this is the what the entity name is called. If not set it will default to the title case of the mqtt_status_topic's first part, e.g. if mqtt_status_topic = leaf/status it will default to Leaf
 
 ```
 [get-leaf-info]
@@ -35,7 +37,8 @@ docker run \
        -e MQTT_STATUS_TOPIC="leaf/status" \
        -e NISSAN_REGION_CODE="NE" \
        -e API_UPDATE_INTERVAL_MIN=30 \
-       -e HOMEASSISTNANT=1 \
+       -e HOMEASSISTANT=1 \
+       -e HA_NAME="My Leaf" \
        --name leaf-mqtt \
        leaf-mqtt
 ```
