@@ -1,0 +1,44 @@
+{
+  "name": "Leaf-mqtt",
+  "version": "0.1",
+  "slug": "leaf-mqtt",
+  "description": "Leaf to MQTT",
+  "arch": [
+    "armhf",
+    "armv7",
+    "aarch64",
+    "amd64",
+    "i386"
+  ],
+  "startup": "before",
+  "boot": "auto",
+  "options": {
+    "USERNAME": null,
+    "PASSWORD": null,
+    "MQTT_HOST": null,
+    "MQTT_PORT": null,
+    "MQTT_USERNAME": null,
+    "MQTT_PASSWORD": null,
+    "MQTT_CONTROL_TOPIC": "leaf/control",
+    "MQTT_STATUS_TOPIC": "leaf/status",
+    "NISSAN_REGION_CODE": "NE",
+    "API_UPDATE_INTERVAL_MIN": "30",
+    "HOMEASSISTANT": 1,
+    "HA_NAME": "Leaf"
+  },
+  "schema": {
+    "USERNAME": "email",
+    "PASSWORD": "password",
+    "MQTT_HOST": "str",
+    "MQTT_PORT": "port",
+    "MQTT_USERNAME": "str",
+    "MQTT_PASSWORD": "password",
+    "MQTT_CONTROL_TOPIC": "str",
+    "MQTT_STATUS_TOPIC": "str",
+    "NISSAN_REGION_CODE": "str",
+    "API_UPDATE_INTERVAL_MIN": "str",
+    "HOMEASSISTANT": "int",
+    "HA_NAME": "str?"
+  }
+}
+

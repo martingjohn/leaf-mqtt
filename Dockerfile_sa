@@ -1,11 +1,8 @@
-FROM $BUILD_FROM
+FROM python:3.7
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --no-cache \
-        gcc \
-        git \
-        musl-dev 
+RUN apt-get update && apt-get install git
 
 RUN mkdir /conf
 COPY config.ini /conf/
