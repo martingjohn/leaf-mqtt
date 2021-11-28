@@ -7,13 +7,15 @@ RUN apk add --no-cache \
         git \
         musl-dev 
 
-RUN mkdir /conf
+WORKDIR /conf
 COPY config.ini /conf/
 
-COPY . /app
 WORKDIR /app
-RUN chmod +x leaf-mqtt.py
+COPY requirements.txt /app
 
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
+RUN chmod +x leaf-mqtt.py
 
 ENTRYPOINT ["python", "leaf-mqtt.py"]
