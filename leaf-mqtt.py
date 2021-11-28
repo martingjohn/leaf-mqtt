@@ -96,7 +96,8 @@ def on_message(client, userdata, msg):
     logging.info(msg.topic+" "+str(msg.payload))
 
     control_subtopic = msg.topic.rsplit('/', 1)[1]
-    control_message = msg.payload
+    # Convert from bytes to string
+    control_message = str(msg.payload,'utf-8')
     logging.info("control sub-topic: " + control_subtopic)
     logging.info("control message: " + control_message)
 
@@ -126,7 +127,8 @@ def mqtt_publish(leaf_info):
     utc_datetime = datetime.strptime(leaf_info.answer["BatteryStatusRecords"]["NotificationDateAndTime"], '%Y/%m/%d %H:%M')
     now_timestamp = time.time()
     offset = datetime.fromtimestamp(now_timestamp) - datetime.utcfromtimestamp(now_timestamp)
-    client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%d.%m %H:%M"))
+    #client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%d.%m %H:%M"))
+    client.publish(mqtt_status_topic + "/last_updated", (utc_datetime + offset).strftime("%Y-%m-%d %H:%M:%S"))
     time.sleep(1)
     client.publish(mqtt_status_topic + "/battery_percent", leaf_info.battery_percent)
     time.sleep(1)
