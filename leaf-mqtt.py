@@ -115,10 +115,9 @@ def on_message(client, userdata, msg):
     if control_subtopic == 'update':
         logging.info('Update control command received: ' + control_message)
         if control_message == '1':
-            get_leaf_status()
-            #leaf_info = get_leaf_update()
-            #time.sleep(10)
-            #mqtt_publish(leaf_info)
+            leaf_info = get_leaf_update()
+            time.sleep(10)
+            mqtt_publish(leaf_info)
 
 
 def mqtt_publish(leaf_info):
@@ -236,6 +235,7 @@ def get_leaf_update():
         battery_status = l.get_status_from_update(result_key)
 
     leaf_info = l.get_latest_battery_status()
+    leaf_info.vin=l.vin
     return (leaf_info)
 
 
