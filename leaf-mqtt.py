@@ -354,6 +354,17 @@ def mqtt_register(vin):
     client.publish("homeassistant/sensor/"+vin+"_range_ac_off_miles/config", json.dumps(range_ac_off_miles))
     time.sleep(1)
 
+    update={
+            "name": ha_name+" Update",
+            "command_topic": "~/update",
+            "payload_on": "1",
+            "payload_off": "0",
+            "unique_id": vin+"_update",
+            "~": mqtt_control_topic
+            }
+    client.publish("homeassistant/switch/"+vin+"_update/config", json.dumps(update))
+    time.sleep(1)
+
     return
 
 
